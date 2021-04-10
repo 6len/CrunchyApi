@@ -1,0 +1,38 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    compileOnly 'org.projectlombok:lombok:1.18.2'
+    compile "com.sparkjava:spark-core:2.7.2"
+    compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.2'
+    compile group: 'ch.qos.logback', name:'logback-classic', version: '1.0.9'
+    compile group: 'ch.qos.logback', name:'logback-core', version: '1.0.9'
+    compile group: 'org.jasypt', name: 'jasypt', version: '1.9.2'
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.0.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.3.1'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task RunServer(type:JavaExec) {
+    mainClassName = 'Crunchy'
+    main = 'Crunchy'
+    classpath = sourceSets.main.runtimeClasspath
+}
+
+applicationName = "CrunchyApi"
+task stage(dependsOn: ['build', 'clean', 'installDist'])
+build.mustRunAfter clean
