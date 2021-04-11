@@ -13,6 +13,7 @@ import java.io.IOException;
 public class RiotRequester {
     private OkHttpClient client = new OkHttpClient().newBuilder().build();
     private ObjectMapper objectMapper = new ObjectMapper();
+    private String riotApiKey = "RGAPI-fb69464a-7352-4f63-9307-15c7f58e4b10";
 
     public String getAll(String summonerName) throws IOException {
         SummonerDTO summonerDTO = getSummoner(summonerName);
@@ -26,7 +27,7 @@ public class RiotRequester {
         Request request = new Request.Builder()
                 .url("https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" + summonerName)
                 .method("GET", null)
-                .addHeader("X-Riot-Token", "RGAPI-8ee109bb-597d-46ce-8f72-fe15dd06297a")
+                .addHeader("X-Riot-Token", riotApiKey)
                 .build();
         Response response = client.newCall(request).execute();
         return objectMapper.readValue(response.body().byteStream(), SummonerDTO.class);
@@ -36,7 +37,7 @@ public class RiotRequester {
         Request request = new Request.Builder()
                 .url("https://euw1.api.riotgames.com/lol/match/v4/matchlists/by-account/" + accountId)
                 .method("GET", null)
-                .addHeader("X-Riot-Token", "RGAPI-8ee109bb-597d-46ce-8f72-fe15dd06297a")
+                .addHeader("X-Riot-Token", riotApiKey)
                 .build();
         Response response = client.newCall(request).execute();
         return objectMapper.readValue(response.body().byteStream(), MatchListDTO.class);
@@ -46,7 +47,7 @@ public class RiotRequester {
         Request request = new Request.Builder()
                 .url("https://euw1.api.riotgames.com/lol/match/v4/matches/" + matchId)
                 .method("GET", null)
-                .addHeader("X-Riot-Token", "RGAPI-8ee109bb-597d-46ce-8f72-fe15dd06297a")
+                .addHeader("X-Riot-Token", riotApiKey)
                 .build();
         Response response = client.newCall(request).execute();
         return objectMapper.readValue(response.body().byteStream(), MatchDTO.class);
