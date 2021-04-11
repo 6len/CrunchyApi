@@ -49,7 +49,7 @@ public class RiotRequester {
 
     public List<MatchDTO> getLastTenMatches(MatchListDTO matchListDTO) throws IOException {
         List<MatchDTO> matchList = new ArrayList<>();
-        matchListDTO.matches.forEach(match -> {
+        matchListDTO.matches.subList(0,10).forEach(match -> {
             try {
                 matchList.add(getMatchStats(match.gameId));
             } catch (IOException e) {
