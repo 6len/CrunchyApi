@@ -1,5 +1,6 @@
 import DTO.MatchDTO;
 import DTO.MatchListDTO;
+import DTO.MatchRequestDTO;
 import DTO.SummonerDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
@@ -8,6 +9,9 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @NoArgsConstructor
 public class RiotRequester {
@@ -18,9 +22,9 @@ public class RiotRequester {
     public String getAll(String summonerName) throws IOException {
         SummonerDTO summonerDTO = getSummoner(summonerName);
         MatchListDTO matchListDTO = getMatchList(summonerDTO.accountId);
-        MatchDTO matchDTO = getMatchStats(matchListDTO.matches.get(0).gameId);
+        List<MatchDTO> matchDTOlist = getLastTenMatches(matchListDTO);
 
-        return objectMapper.writeValueAsString(matchDTO);
+        return objectMapper.writeValueAsString(new MatchRequestDTO(summonerDTO, matchDTOlist));
     }
 
     public SummonerDTO getSummoner(String summonerName) throws IOException {
@@ -42,6 +46,18 @@ public class RiotRequester {
         Response response = client.newCall(request).execute();
         return objectMapper.readValue(response.body().byteStream(), MatchListDTO.class);
     }
+
+    public List<MatchDTO> getLastTenMatches(MatchListDTO matchListDTO) throws IOException {
+        List<MatchDTO> matchList = new ArrayList<>();
+        matchListDTO.matches.forEach(match -> {
+            try {
+                matchList.add(getMatchStats(match.gameId));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+        return matchList;
+    };
 
     public MatchDTO getMatchStats(long matchId) throws IOException {
         Request request = new Request.Builder()
