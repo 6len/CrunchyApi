@@ -1,7 +1,5 @@
-import DTO.MatchDTO;
-import DTO.MatchListDTO;
-import DTO.MatchRequestDTO;
-import DTO.SummonerDTO;
+import DTO.*;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.NoArgsConstructor;
 import okhttp3.OkHttpClient;
@@ -22,9 +20,10 @@ public class RiotRequester {
     public String getAll(String summonerName) throws IOException {
         SummonerDTO summonerDTO = getSummoner(summonerName);
         MatchListDTO matchListDTO = getMatchList(summonerDTO.accountId);
+        List<LeagueEntryDTO> summonerStats = getSummonerInfo(summonerDTO.id);
         List<MatchDTO> matchDTOlist = getLastTenMatches(matchListDTO);
 
-        return objectMapper.writeValueAsString(new MatchRequestDTO(summonerDTO, matchDTOlist));
+        return objectMapper.writeValueAsString(new MatchRequestDTO(summonerDTO, matchDTOlist, summonerStats));
     }
 
     public SummonerDTO getSummoner(String summonerName) throws IOException {
@@ -35,6 +34,16 @@ public class RiotRequester {
                 .build();
         Response response = client.newCall(request).execute();
         return objectMapper.readValue(response.body().byteStream(), SummonerDTO.class);
+    }
+
+    public List<LeagueEntryDTO> getSummonerInfo(String summonerId) throws IOException {
+        Request request = new Request.Builder()
+                .url("https://euw1.api.riotgames.com/lol/league/v4/entries/by-summoner/" + summonerId)
+                .method("GET", null)
+                .addHeader("X-Riot-Token", riotApiKey)
+                .build();
+        Response response = client.newCall(request).execute();
+        return objectMapper.readValue(response.body().byteStream(), new TypeReference<List<LeagueEntryDTO>>(){});
     }
 
     public MatchListDTO getMatchList(String accountId) throws IOException {
