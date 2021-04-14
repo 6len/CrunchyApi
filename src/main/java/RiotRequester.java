@@ -43,7 +43,8 @@ public class RiotRequester {
                 .addHeader("X-Riot-Token", riotApiKey)
                 .build();
         Response response = client.newCall(request).execute();
-        return objectMapper.readValue(response.body().byteStream(), new TypeReference<List<LeagueEntryDTO>>(){});
+        return objectMapper.readValue(response.body().byteStream(), new TypeReference<List<LeagueEntryDTO>>() {
+        });
     }
 
     public MatchListDTO getMatchList(String accountId) throws IOException {
@@ -58,7 +59,7 @@ public class RiotRequester {
 
     public List<MatchDTO> getLastTenMatches(MatchListDTO matchListDTO) throws IOException {
         List<MatchDTO> matchList = new ArrayList<>();
-        matchListDTO.matches.subList(0,10).forEach(match -> {
+        matchListDTO.matches.subList(0, 10).forEach(match -> {
             try {
                 matchList.add(getMatchStats(match.gameId));
             } catch (IOException e) {
@@ -66,7 +67,9 @@ public class RiotRequester {
             }
         });
         return matchList;
-    };
+    }
+
+    ;
 
     public MatchDTO getMatchStats(long matchId) throws IOException {
         Request request = new Request.Builder()
@@ -76,5 +79,15 @@ public class RiotRequester {
                 .build();
         Response response = client.newCall(request).execute();
         return objectMapper.readValue(response.body().byteStream(), MatchDTO.class);
+    }
+
+    public String getMatchTimeline(long matchId) throws IOException {
+        Request request = new Request.Builder()
+                .url("https://euw1.api.riotgames.com/lol/match/v4/timelines/by-match/" + matchId)
+                .method("GET", null)
+                .addHeader("X-Riot-Token", riotApiKey)
+                .build();
+        Response response = client.newCall(request).execute();
+        return objectMapper.writeValueAsString(objectMapper.readValue(response.body().byteStream(), MatchTimelineDTO.class));
     }
 }

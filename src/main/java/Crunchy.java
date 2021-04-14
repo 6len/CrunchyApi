@@ -25,6 +25,13 @@ public class Crunchy {
 
             return riotRequester.getAll(summonerName);
         });
+
+        get("/match-timeline/:matchId", (request, response) -> {
+            long matchId = Long.parseLong(request.params(":matchId"));
+            OkHttpClient client = new OkHttpClient().newBuilder().build();
+
+            return riotRequester.getMatchTimeline(matchId);
+        });
     }
 
     static int getHerokuAssignedPort() {
