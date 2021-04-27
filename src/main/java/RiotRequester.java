@@ -15,7 +15,7 @@ import java.util.List;
 public class RiotRequester {
     private OkHttpClient client = new OkHttpClient().newBuilder().build();
     private ObjectMapper objectMapper = new ObjectMapper();
-    private String riotApiKey = "RGAPI-72a661f6-e1fe-4635-a560-3219cf6a6646";
+    private String riotApiKey = "RGAPI-9fb437f5-8b27-4673-b5c8-016985f95548";
 
     public String getAll(String summonerName) throws IOException {
         SummonerDTO summonerDTO = getSummoner(summonerName);
